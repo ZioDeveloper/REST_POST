@@ -35,6 +35,7 @@ namespace REST_POST
         public frmSendData()
         {
             InitializeComponent();
+            txtHASH.Text = "";
             wfTimer.Enabled = false;
         }
 
@@ -47,7 +48,8 @@ namespace REST_POST
             ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["Ecoprogram"];
             string connStr = "";
             connStr = "Data Source=GESQL01,8194;Initial Catalog=Ecoprogram;Integrated Security=False;MultipleActiveResultSets=True;" + "User ID=" + Utils.AppUser + ";Password=" + Utils.AppPassword;
-            txtHASH.Text = "";
+            txtHASH.Text += "Inizio lavoro : " + DateTime.Now.ToString("dd MM yyyy hh:mm:ss:ms") + Environment.NewLine;
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
@@ -153,7 +155,7 @@ namespace REST_POST
                                                 {
                                                     // Converto to Base 64
                                                     string test = dr1["NomeFile"].ToString();
-                                                    Byte[] bytes = File.ReadAllBytes(@"C:\Test\" + dr1["NomeFile"].ToString());
+                                                    Byte[] bytes = File.ReadAllBytes(@"V:\BOT\Ecoprogram\Documenti\CheckMeccanica\" + dr1["NomeFile"].ToString());
                                                     String file = Convert.ToBase64String(bytes);
                                                     json += Environment.NewLine + "\t" + "\t" + "\t" + "Foto1".DQuotedStr() + ":" + file.DQuotedStr() + ","; ;
 
@@ -163,7 +165,7 @@ namespace REST_POST
                                                 {
                                                     // Converto to Base 64
                                                     string test = dr1["NomeFile"].ToString();
-                                                    Byte[] bytes = File.ReadAllBytes(@"C:\Test\" + dr1["NomeFile"].ToString());
+                                                    Byte[] bytes = File.ReadAllBytes(@"V:\BOT\Ecoprogram\Documenti\CheckMeccanica\" + dr1["NomeFile"].ToString());
                                                     String file = Convert.ToBase64String(bytes);
                                                     json += Environment.NewLine + "\t" + "\t" + "\t" + "Foto2".DQuotedStr() + ":" + file.DQuotedStr() + ",";
 
@@ -172,7 +174,7 @@ namespace REST_POST
                                                 {
                                                     // Converto to Base 64
                                                     string test = dr1["NomeFile"].ToString();
-                                                    Byte[] bytes = File.ReadAllBytes(@"C:\Test\" + dr1["NomeFile"].ToString());
+                                                    Byte[] bytes = File.ReadAllBytes(@"V:\BOT\Ecoprogram\Documenti\CheckMeccanica\" + dr1["NomeFile"].ToString());
                                                     String file = Convert.ToBase64String(bytes);
                                                     json += Environment.NewLine + "\t" + "\t" + "\t" + "Foto3".DQuotedStr() + ":" + file.DQuotedStr();
                                                 }
@@ -291,12 +293,26 @@ namespace REST_POST
                     }
                 }
 
+                
+
             }
+
+            txtHASH.Text += Environment.NewLine + Environment.NewLine + "Fine lavoro  : " + DateTime.Now.ToString("dd MM yyyy hh:mm:ss:ms") + Environment.NewLine;
+            txtHASH.Text += "************************************************************** " + Environment.NewLine + Environment.NewLine;
+
+            txtHASH.SelectionStart = txtHASH.Text.Length;
+            txtHASH.ScrollToCaret();
+
         }
 
         private void cmdSetTimer_Click(object sender, EventArgs e)
         {
+            int myMillesc = 0;
+            string aValue = txtTimerValue.Text;
+            bool success = int.TryParse(aValue, out myMillesc);
+            wfTimer.Interval = myMillesc;
             wfTimer.Enabled = !wfTimer.Enabled;
+            cmdSendToEcoprog.PerformClick();
 
             if ((wfTimer == null) || (!wfTimer.Enabled))
             {
@@ -325,7 +341,8 @@ namespace REST_POST
             //Application.DoEvents();
 
             //MessageBox.Show("TEST");
-            ExecuteTask(new object(), new EventArgs());
+            //ExecuteTask(new object(), new EventArgs());
+            cmdSendToEcoprog.PerformClick();
 
 
         }
@@ -452,7 +469,7 @@ namespace REST_POST
                                             {
                                                 // Converto to Base 64
                                                 string test = dr1["NomeFile"].ToString();
-                                                Byte[] bytes = File.ReadAllBytes(@"C:\Test\" + dr1["NomeFile"].ToString());
+                                                Byte[] bytes = File.ReadAllBytes(@"V:\BOT\Ecoprogram\Documenti\CheckMeccanica\" + dr1["NomeFile"].ToString());
                                                 String file = Convert.ToBase64String(bytes);
                                                 json += Environment.NewLine + "\t" + "\t" + "\t" + "Foto1".DQuotedStr() + ":" + file.DQuotedStr() + ","; ;
 
@@ -462,7 +479,7 @@ namespace REST_POST
                                             {
                                                 // Converto to Base 64
                                                 string test = dr1["NomeFile"].ToString();
-                                                Byte[] bytes = File.ReadAllBytes(@"C:\Test\" + dr1["NomeFile"].ToString());
+                                                Byte[] bytes = File.ReadAllBytes(@"V:\BOT\Ecoprogram\Documenti\CheckMeccanica\" + dr1["NomeFile"].ToString());
                                                 String file = Convert.ToBase64String(bytes);
                                                 json += Environment.NewLine + "\t" + "\t" + "\t" + "Foto2".DQuotedStr() + ":" + file.DQuotedStr() + ",";
 
@@ -471,7 +488,7 @@ namespace REST_POST
                                             {
                                                 // Converto to Base 64
                                                 string test = dr1["NomeFile"].ToString();
-                                                Byte[] bytes = File.ReadAllBytes(@"C:\Test\" + dr1["NomeFile"].ToString());
+                                                Byte[] bytes = File.ReadAllBytes(@"V:\BOT\Ecoprogram\Documenti\CheckMeccanica\" + dr1["NomeFile"].ToString());
                                                 String file = Convert.ToBase64String(bytes);
                                                 json += Environment.NewLine + "\t" + "\t" + "\t" + "Foto3".DQuotedStr() + ":" + file.DQuotedStr();
                                             }
@@ -589,6 +606,66 @@ namespace REST_POST
                 }
 
             }
+        }
+
+        private void cmdClean_Click(object sender, EventArgs e)
+        {
+            txtHASH.Text = "";
+            txtHASH.Refresh();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            txtTimerValue.Text = "86400000";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            txtTimerValue.Text = "43200000";
+        }
+
+        private void cmdCountVin_Click(object sender, EventArgs e)
+        {
+            txtHASH.Text = "";
+            string connStr = "";
+            int cnt = 0;
+            connStr = "Data Source=GESQL01,8194;Initial Catalog=Ecoprogram;Integrated Security=False;MultipleActiveResultSets=True;" + "User ID=" + Utils.AppUser + ";Password=" + Utils.AppPassword;
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                //myTimer.Enabled = false;
+
+
+                using (SqlCommand cmd = new SqlCommand(SQL, conn))
+                {
+                    SQL = " SELECT  COUNT(DISTINCT(Targa)) AS Cnt FROM Ispezioni_Flat_vw WHERE IsTransferred = 0 AND IsClosed = 1 ";
+
+                    cmd.CommandText = SQL;
+
+                    cnt = (int)cmd.ExecuteScalar();
+
+                    try
+                    {
+                        txtHASH.Text = "There are " + cnt.ToString() + " records to be sent.";
+                    }
+                    catch
+                    {
+                        txtHASH.Text = "There are 0 records to be sent.";
+                    }
+                }
+            }
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            txtTimerValue.Text = "14400000";
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            txtTimerValue.Text = "7200000";
         }
     }
 }
